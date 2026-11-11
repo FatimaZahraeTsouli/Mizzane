@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mizan</title>
     <meta name="description" content="mizan est une platform qui met en disponibilité de ses utilisateurs tous les changements qui concernent les metaux.">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="./assets/tailwind.css">
     <script type="module" src="src/app.js" defer></script>
+    <script type="module" src="src/metalCarte.js" defer></script>
 </head>
 <body>
     <header class="flex bg-blue-950 justify-between">
@@ -39,65 +40,28 @@
             </div>
         </section>
 
-        <section class="flex gap-6 mx-10">
-            <article class="w-200  border border-black rounded-2xl">
-                <div class="flex bg-blue-950 gap-40 border rounded-t-2xl h-20 justify-evenly ">
-                    <h1 class="text-white text-2xl font-serif py-5 px-5">Prix du jour</h1>
-                    <p class="time text-white font-mono py-7"> time </p>
-                </div>
 
-                <div class="flex justify-evenly ">
-                    <div>
-                    <div class="flex ">
-                        <img class=" rounded-full w-30 h-30 mt-10" src="assets/images/gold.jpg" alt="Or">
-                        <h1 class="text-5xl font-serif mt-16">OR</h1>
-                    </div>
-                    <div class="flex justify-center mx-5">
-                        <p id="or" class="font-bold text-4xl mt-10"></p>&emsp;
-                        <p class="text-xl font-semibold mt-12">
-                            <span id="deviseOr"></span>
-                            /
-                            <span id="uniteOr"></span>
-                        </p>
-                    </div>
-                    </div>
 
-                    <div>
-                    <div class="flex ">
-                        <img class=" rounded-full w-40 h-40 mt-6" src="assets/images/silver .webp" alt="Argent">
-                        <h1 class="text-5xl font-serif mt-16">Argent</h1>
-                    </div>
-                    <div class="flex justify-center mx-5">
-                        <p id="argent" class="font-bold text-4xl mt-4"></p>&emsp;
-                        <p class="text-xl font-semibold mt-6">
-                            <span id="deviseArgent"></span>
-                            /
-                            <span id="uniteArgent"></span>
-                        </p>
-                    </div>
-                </div>
-                </div>
-                <div class="flex gap-10 mx-10 mt-10">
-                    <div class="flex gap-3">
-                    <p class="bg-yellow-500 border rounded-full w-5 h-5"></p>
-                    <p class="font-semibold">Or</p>
-                    </div>
-                    <div class="flex gap-3">
-                    <p class="bg-gray-300 border rounded-full w-5 h-5"></p>
-                    <p class="font-semibold">Argent</p>
-                    </div>
-                </div>
-            </article>
+        <section id="metaux" class="grid grid-cols-2 gap-4 mx-10">
+            <metal-card metal = "xau"></metal-card>
+            <metal-card metal = "xag"></metal-card>
+        </section>
 
-            <article class="w-125 border border-black rounded-2xl">
+
+                   
+
+            <section>
+            <article class=" mx-7 border border-black rounded-2xl mt-10">
                 <div class="flex bg-blue-950 gap-40 border rounded-t-2xl h-20 justify-evenly">
                     <h1 class="text-white text-2xl font-serif py-5 px-5">Estimer la valeur d'un bijoux</h1>
                 </div>
+                <div class="w-300 flex gap-30 ">
                 <div class="grid grid-cols-1 gap-3">
                     <h2 class="font-semibold pt-10 px-10">Poids (en gramme):</h2>
-                    <input id="poids" class="border rounded border-black w-100 h-10 mx-10 px-10" type="number" placeholder="Exemple:10">
+                    <input id="poids" class="border rounded border-black md:w-100 w-50 h-10 mx-10 px-10" type="number" placeholder="Exemple:10">
                     <button id="Calculer" class="border rounded-xl h-10 w-50 mx-35 bg-yellow-500 font-semibold text-xl py-1">Calculer</button>
                 </div>
+
                 <div class="border rounded-xl px-1 py-10 my-5 mx-10 bg-amber-100 grid justify-center h-50 w-105">
                     <h2 class="font-bold text-xl">Valeur Estimée:</h2>
                     <div class="flex font-semibold text-7xl gap-0">
@@ -106,13 +70,15 @@
                     </div>
                     <p class="text-xl">Entrée un poids pour estimer la valeur</p>
                 </div>
+                </div>
+                
             </article>
         </section>
 
         <section class="flex justify-evenly mx-10 border rounded-2xl px-1 mt-10 h-20">
             <div class="grid grid-cols-1 mt-3">
                 <p class="font-semibold text-2xl">Dernière mise à jour</p>
-                <p class="time font-bold text-xl flex justify-center">Time</p>
+                <p class="font-bold text-xl flex justify-center" id="temps">Time</p>
             </div>
             <div class="grid grid-cols-1 mt-3">
                 <p class="font-semibold text-2xl">Application disponible</p>
