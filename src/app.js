@@ -5,10 +5,24 @@ const actualiser = document.getElementById("Actualiser");
 const erreur = document.getElementById("erreur");
 const messageAttente = document.getElementById("message d'attente");
 const temps = document.getElementById("temps");
+const choixDevise = document.getElementById("choixdevise");
+const poids = document.getElementById("poids");
+const metauxCalcul = document.getElementById("metauxCalcul");
+const Calculer = document.getElementById("Calculer");
+const montantBijoux = document.getElementById("montantBijoux");
+const messageestimation = document.getElementById("messageestimation");
+
+
+// choix de devises 
+
+
+choixDevise.addEventListener("change", function() {
+    chargerprix();
+});
 
 // CHARGER DATA DE L'API
 
-async function chargerhistorique(symbol){
+async function chargerhistorique(symbol, ){
     const response = await fetch(`https://xaus.com/api/v1/chart?symbol=${symbol}&range=1d&interval=5m`);
     const historique = await response.json();
     const prixPrecedent = historique.points[0].c;
@@ -19,9 +33,9 @@ async function chargerhistorique(symbol){
         variation, percentage
     }
 }
-console.log(chargerhistorique("silver"));
 
 
+// charger les infos 
 
 async function chargerprix(){
     try {
@@ -31,16 +45,12 @@ async function chargerprix(){
             throw new Error("Erreur lors de la récupération des prix!!")
         }
         const data = await reponse.json();
-        console.log(data.xau);
-        console.log(data); 
-        console.log(Object.keys(data));
 
-        cartes.forEach(carte => {
+        cartes.forEach(async carte => {
             const metal = carte.getAttribute("metal");
-            console.log(metal);
             const nomMetal = carte.shadowRoot.getElementById("nomMetal");
-            const montant = carte.shadowRoot.getElementById("montant");
-            const deviseMetal = carte.shadowRoot.getElementById("deviseMetal");
+            let montant = carte.shadowRoot.getElementById("montant");
+            let deviseMetal = carte.shadowRoot.getElementById("deviseMetal");
             const uniteMetal = carte.shadowRoot.getElementById("uniteMetal"); 
             const image = carte.shadowRoot.getElementById("image");
             const variation = carte.shadowRoot.getElementById("variation");
@@ -50,8 +60,24 @@ async function chargerprix(){
             if (metal === "xau"){
                 time.textContent = data.price_as_of;
                 nomMetal.textContent = "Or";
-                montant.textContent = data.xau.price;
-                deviseMetal.textContent = data.xau.currency;
+                if(choixDevise.value === "USD"){
+                    const deviseA = await fetch (`https://xaus.com/api/v1/spot?currency=USD&unit=gram`);
+                    const DeviseA = await deviseA.json();
+                    montant.textContent = DeviseA.xau.price.toFixed(4);
+                    deviseMetal.textContent = choixDevise.value;
+                }
+                else if (choixDevise.value === "EUR"){
+                    const deviseE = await fetch(`https://xaus.com/api/v1/spot?currency=EUR&unit=gram`);
+                    const DeviseE = await deviseE.json();
+                    montant.textContent = DeviseE.xau.price.toFixed(4);
+                    deviseMetal.textContent = choixDevise.value;
+                }    
+                else if (choixDevise.value === "MAD"){
+                    const deviseM = await fetch (`https://xaus.com/api/v1/spot?currency=MAD&unit=gram`);
+                    const DeviseM = await deviseM.json();
+                    montant.textContent = DeviseM.xau.price.toFixed(4);
+                    deviseMetal.textContent = choixDevise.value;
+                }
                 uniteMetal.textContent = data.xau.unit;
                 image.src = "./assets/images/gold.jpg";
                 chargerhistorique("xau").then(resultat => {
@@ -69,14 +95,29 @@ async function chargerprix(){
                     variation.classList.add("text-gray-500");
                 }
                 });
-                // percentage.textContent = 
                 erreur.classList.add("hidden");
             }
             else if(metal === "xag"){
                 time.textContent = data.price_as_of;
                 nomMetal.textContent = "Argent";
-                montant.textContent = (data.silver_usd_oz / 31.1035).toFixed(4);
-                deviseMetal.textContent = "USD";
+                if(choixDevise.value === "USD"){
+                    const deviseA = await fetch (`https://xaus.com/api/v1/spot?currency=USD&unit=gram`);
+                    const DeviseA = await deviseA.json();
+                    montant.textContent = (DeviseA.silver_usd_oz / 31.1035).toFixed(4);
+                    deviseMetal.textContent = choixDevise.value;
+                }
+                else if (choixDevise.value === "EUR"){
+                    const deviseE = await fetch(`https://xaus.com/api/v1/spot?currency=EUR&unit=gram`);
+                    const DeviseE = await deviseE.json();
+                    montant.textContent = ((DeviseE.silver_usd_oz / 31.1035) / DeviseE.fx_rates.EUR).toFixed(4);
+                    deviseMetal.textContent = choixDevise.value;
+                }    
+                else if (choixDevise.value === "MAD"){
+                    const deviseM = await fetch (`https://xaus.com/api/v1/spot?currency=MAD&unit=gram`);
+                    const DeviseM = await deviseM.json();
+                    montant.textContent = ((DeviseM.silver_usd_oz / 31.1035) * DeviseM.fx_rate).toFixed(4);
+                    deviseMetal.textContent = choixDevise.value;
+                }
                 uniteMetal.textContent = "gram";
                 image.src = "./assets/images/silver%20.webp";
                 chargerhistorique("silver").then(resultat => {
@@ -96,11 +137,10 @@ async function chargerprix(){
                 });
                 erreur.classList.add("hidden");
             }
-        })
+        });
     } catch (error) {
-        console.error(error);
         erreur.textContent = "Impossible de récupérer les prix. Veuillez réessayer!!";
-        erreur.classList.remove("hidden");   
+        erreur.classList.remove("hidden");
     }
 }
 chargerprix();
@@ -108,23 +148,62 @@ chargerprix();
 
 // BUTTON ACTUALISER 
 
-let dernierActuaisation = Date.now();
+let dernierActualisation = Date.now();
 chargerprix();
 actualiser.addEventListener("click", function(){
-    if(Date.now() - dernierActuaisation < 60000){
+    if(Date.now() - dernierActualisation < 60000){
         messageAttente.classList.remove("hidden");
-        messageAttente.textContent = "veillez patientez au moins 60 sec avant d'actualiser la page!";
+        messageAttente.textContent = "veuillez patientez au moins 60 sec avant d'actualiser la page!";
         return;
     }
-    dernierActuaisation = Date.now();
-    messageAttente.classList.add("hidden");
+    dernierActualisation = Date.now();
     chargerprix();
+    messageAttente.classList.add("hidden");
 });
 
 
+// calculer estimation 
+
+function calculerEstimation(prix, poids){
+    return prix * poids;
+}
+
+let prixEstimateurMAD;
+async function chargerPrixEstimateur() {
+    const reponse = await fetch("https://xaus.com/api/v1/spot?currency=MAD&unit=gram");
+    prixEstimateurMAD = await reponse.json();
+}
+// chargerPrixEstimateur;
+chargerPrixEstimateur().then(function(){
+});
+Calculer.addEventListener("click", async function(){
+    await chargerPrixEstimateur();
+    let resultat;
+    console.log("Métal sélectionné :", metauxCalcul.value);
+    if(poids.value == ""){
+        messageestimation.textContent = "Veuillez entrez un poids valide!!";
+        messageestimation.classList.remove("hidden"); // Decomenter se ligne
+        messageestimation.classList.add("text-red-500", "font-semibold");
+        montantBijoux.textContent = "------" 
+        return;
+    }
+    else if (poids.value < 0){
+        messageestimation.textContent = "Veuillez entrez un poids valide!!";
+        messageestimation.classList.add("text-red-500", "font-bold");
+        return;
+    }
+    else if (metauxCalcul.value === "Or"){
+    resultat = calculerEstimation(prixEstimateurMAD.xau.price, Number(poids.value));
+    }
+    else if (metauxCalcul.value === "Argent"){
+    resultat = calculerEstimation(((prixEstimateurMAD.silver_usd_oz / 31.1035) * prixEstimateurMAD.fx_rate),Number(poids.value));
+    }
+    montantBijoux.textContent = resultat;
+    messageestimation.classList.add("hidden");
+
+})
 
 
-// Créer la structure HTML d'une carte.
 
 
 
@@ -139,7 +218,8 @@ actualiser.addEventListener("click", function(){
 
 
 
-// Parcourir le tableau JSON et générer les cartes dynamiquement.
-// Calculer la variation en valeur et en pourcentage.
-// Afficher la bonne flèche et la bonne couleur selon le résultat.
+
+
+
+
 

@@ -19,9 +19,16 @@
                 <h1 class="text-white font-serif text-5xl py-3  ">Mizan</h1>
             </div>
         </div>
+        <div class="flex">
+        <select class="text-white border rounded bg-blue-950 h-10 w-30 my-10" name="choixdevise" id="choixdevise">
+            <option value="USD">USD</option>
+            <option value="MAD">MAD</option>
+            <option value="EUR">EUR</option>
+        </select>
         <div>
             <button id="Actualiser" class="text-black font-serif text-xl h-10 w-30 my-10 mx-20 border rounded bg-slate-50">Actualiser</button>
             <p id="message d'attente" class="font-mono text-white hidden"></p>
+        </div>
         </div>
     </header>
     <main>
@@ -52,23 +59,29 @@
 
             <section>
             <article class=" mx-7 border border-black rounded-2xl mt-10">
-                <div class="flex bg-blue-950 gap-40 border rounded-t-2xl h-20 justify-evenly">
+                <div class="flex bg-blue-950 gap-40 border rounded-t-2xl h-20 justify-between absolute">
                     <h1 class="text-white text-2xl font-serif py-5 px-5">Estimer la valeur d'un bijoux</h1>
                 </div>
                 <div class="w-300 flex gap-30 ">
                 <div class="grid grid-cols-1 gap-3">
                     <h2 class="font-semibold pt-10 px-10">Poids (en gramme):</h2>
-                    <input id="poids" class="border rounded border-black md:w-100 w-50 h-10 mx-10 px-10" type="number" placeholder="Exemple:10">
+                    <div>
+                    <input id="poids" class="border  rounded border-black md:w-100 w-50 h-10 mx-10 px-10" type="number" placeholder="Exemple:10">
+                    <select name="metaux" id="metauxCalcul" class="border rounded bg-white text-blue-950 w-10 h-10">
+                        <option value="Or">Or</option>
+                        <option value="Argent">Argent</option>
+                    </select>
+                    </div>
                     <button id="Calculer" class="border rounded-xl h-10 w-50 mx-35 bg-yellow-500 font-semibold text-xl py-1">Calculer</button>
                 </div>
 
                 <div class="border rounded-xl px-1 py-10 my-5 mx-10 bg-amber-100 grid justify-center h-50 w-105">
                     <h2 class="font-bold text-xl">Valeur Estimée:</h2>
-                    <div class="flex font-semibold text-7xl gap-0">
-                        <p id="montant">------</p>
+                    <div class="flex font-semibold text-5xl gap-0">
+                        <p id="montantBijoux" class="font-semibold text-4xl">------</p>
                         <p>DH</p>
                     </div>
-                    <p class="text-xl">Entrée un poids pour estimer la valeur</p>
+                    <p class="text-xl" id="messageestimation">Entrée un poids pour estimer la valeur</p>
                 </div>
                 </div>
                 
