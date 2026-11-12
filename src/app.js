@@ -182,14 +182,16 @@ Calculer.addEventListener("click", async function(){
     console.log("Métal sélectionné :", metauxCalcul.value);
     if(poids.value == ""){
         messageestimation.textContent = "Veuillez entrez un poids valide!!";
-        messageestimation.classList.remove("hidden"); // Decomenter se ligne
+        messageestimation.classList.remove("hidden");
         messageestimation.classList.add("text-red-500", "font-semibold");
         montantBijoux.textContent = "------" 
         return;
     }
     else if (poids.value < 0){
         messageestimation.textContent = "Veuillez entrez un poids valide!!";
-        messageestimation.classList.add("text-red-500", "font-bold");
+        messageestimation.classList.remove("hidden");
+        messageestimation.classList.add("text-red-500", "font-semibold");
+        montantBijoux.textContent = "------" 
         return;
     }
     else if (metauxCalcul.value === "Or"){
