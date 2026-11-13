@@ -20,6 +20,13 @@ L'application permet également d'estimer la valeur d'un bijou selon son poids e
 - Tailwind CSS
 - API REST
 
+## Lighthouse scores
+
+- Performance : 94
+- Accessibility : 87
+- Best Practices : 92
+- SEO : 100
+
 ## Installation et lancement
 
 1. Cloner le dépôt :
@@ -61,7 +68,6 @@ Mizan/
 ## API
 
 L'application utilise une API externe pour récupérer les prix des métaux précieux en temps réel.
-
 Une connexion Internet est nécessaire pour actualiser les données.
 
 ## Auteur
