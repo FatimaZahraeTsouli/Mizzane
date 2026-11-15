@@ -11,26 +11,56 @@ const metauxCalcul = document.getElementById("metauxCalcul");
 const Calculer = document.getElementById("Calculer");
 const montantBijoux = document.getElementById("montantBijoux");
 const messageestimation = document.getElementById("messageestimation");
+const status = document.getElementById("status");
+const statusAPP = document.getElementById("statusAPP");
+const statuserreur = document.getElementById("statuserreur");
 
 
 // choix de devises 
-
 
 choixDevise.addEventListener("change", function() {
     chargerprix();
 });
 
-// CHARGER DATA DE L'API
 
-async function chargerhistorique(symbol, ){
-    const response = await fetch(`https://xaus.com/api/v1/chart?symbol=${symbol}&range=1d&interval=5m`);
+// APPORTER DATA OR DE L'API
+
+
+async function chargerhistoriqueOr(){
+    const response = await fetch(`https://xaus.com/api/v1/intraday?symbol=xau&hours=24`);
+    if (!response.ok) {
+        throw new Error("Erreur HTTP : " + response.status);
+    }
     const historique = await response.json();
-    const prixPrecedent = historique.points[0].c;
-    const prixActuelle = historique.points[historique.points.length - 1].c;
-    const variation = (prixActuelle - prixPrecedent) / 31.1035;
-    const percentage = variation / prixPrecedent * 100;
+    if (!historique.points || historique.points.length < 2) {
+    throw new Error("Données historiques insuffisantes");
+    }
+    const prixPrecedentOr = historique.points[0].p;
+    const prixActuelleOr = historique.points[historique.points.length - 1].p;
+    const variationOr = ( prixActuelleOr - prixPrecedentOr ) / 31.1035;
+    const percentageOr = ((prixActuelleOr - prixPrecedentOr) / prixPrecedentOr) * 100;
     return {
-        variation, percentage
+        variationOr, percentageOr
+    }
+}
+
+// APPORTER DATA ARGENT DE L'API
+
+async function chargerhistoriqueArgent(){
+    const responseArgent = await fetch(`https://xaus.com/api/v1/chart?symbol=silver&range=1d&interval=5m`);
+    if (!responseArgent.ok) {
+        throw new Error("Erreur HTTP : " + responseArgent.status);
+    }
+    const historiqueArgent = await responseArgent.json();
+    if (!historiqueArgent.points || historiqueArgent.points.length < 2) {
+    throw new Error("Données historiques insuffisantes");
+    }
+    const prixPrecedentArgent = historiqueArgent.points[0].c;
+    const prixActuelleArgent = historiqueArgent.points[historiqueArgent.points.length - 1].c;
+    const variationArgent = ( prixActuelleArgent - prixPrecedentArgent ) / 31.1035;
+    const percentageArgent = ((prixActuelleArgent - prixPrecedentArgent) / prixPrecedentArgent) * 100;
+    return {
+        variationArgent, percentageArgent
     }
 }
 
@@ -38,6 +68,8 @@ async function chargerhistorique(symbol, ){
 // charger les infos 
 
 async function chargerprix(){
+    statusAPP.textContent = "chargement de données";
+    statuserreur.textContent = "";
     try {
         const reponse = await fetch("https://xaus.com/api/v1/spot?unit=gram");
 
@@ -80,18 +112,20 @@ async function chargerprix(){
                 }
                 uniteMetal.textContent = data.xau.unit;
                 image.src = "./assets/images/gold.jpg";
-                chargerhistorique("xau").then(resultat => {
-                variation.textContent = resultat.variation.toFixed(4);
-                percentage.textContent = resultat.percentage.toFixed(2) + "%";
-                if (resultat.variation > 0){
-                    variation.classList.add("bg-green-600");
+                chargerhistoriqueOr().then(resultat => {
+                variation.textContent = resultat.variationOr.toFixed(4);
+                percentage.textContent = resultat.percentageOr.toFixed(2) + "%";
+                console.log(resultat.variationOr);
+                console.log(resultat.percentageOr);
+                if (resultat.variationOr > 0){
+                    variation.classList.add("text-green-500");
                     variation.textContent = "↑ " + variation.textContent;
                 }
-                else if (resultat.variation < 0){
+                else if (resultat.variationOr < 0){
                     variation.classList.add("text-red-600");
                     variation.textContent = "↓ " + variation.textContent;
                 }
-                else if (resultat.variation == 0){
+                else if (resultat.variationOr == 0){
                     variation.classList.add("text-gray-500");
                 }
                 });
@@ -120,25 +154,30 @@ async function chargerprix(){
                 }
                 uniteMetal.textContent = "gram";
                 image.src = "./assets/images/silver%20.webp";
-                chargerhistorique("silver").then(resultat => {
-                variation.textContent = resultat.variation.toFixed(4);
-                percentage.textContent = resultat.percentage.toFixed(2) + "%";
-                if (resultat.variation > 0){
-                    variation.classList.add("bg-green-600");
+                chargerhistoriqueArgent().then(resultat => {
+                variation.textContent = resultat.variationArgent.toFixed(4);
+                percentage.textContent = resultat.percentageArgent.toFixed(2) + "%";
+                if (resultat.variationArgent > 0){
+                    variation.classList.add("text-green-600");
                     variation.textContent = "↑ " + variation.textContent;
                 }
-                else if (resultat.variation < 0){
+                else if (resultat.variationArgent < 0){
                     variation.classList.add("text-red-600");
                     variation.textContent = "↓ " + variation.textContent;
                 }
-                else if (resultat.variation == 0){
+                else if (resultat.variationArgent == 0){
                     variation.classList.add("text-gray-500");
                 }
                 });
                 erreur.classList.add("hidden");
             }
         });
+
+        statusAPP.textContent = "Application disponible";
+        statuserreur.textContent = "Chargé avec succés";
     } catch (error) {
+        statusAPP.textContent = "Impossible de charger";
+        statuserreur.textContent = "Échec de chargement";
         erreur.textContent = "Impossible de récupérer les prix. Veuillez réessayer!!";
         erreur.classList.remove("hidden");
     }
@@ -173,6 +212,7 @@ async function chargerPrixEstimateur() {
     const reponse = await fetch("https://xaus.com/api/v1/spot?currency=MAD&unit=gram");
     prixEstimateurMAD = await reponse.json();
 }
+
 // chargerPrixEstimateur;
 chargerPrixEstimateur().then(function(){
 });
@@ -206,6 +246,27 @@ Calculer.addEventListener("click", async function(){
 })
 
 
+// STATUS EN/HORS LIGHNE 
+
+function verifierconnexion(){
+    if (navigator.onLine){
+        status.textContent = "En ligne";
+        status.classList.remove("text-red-600");
+        status.classList.add("text-green-600", "font-semibold")
+    }
+    else {
+        statusAPP.textContent = "Application indisponible";
+        statuserreur.textContent = "veuillez vérifier votre connexion!!";
+        status.textContent = "Hors ligne";
+        status.classList.add("text-red-600", "font-semibold")
+    }
+}
+window.addEventListener("online", verifierconnexion);
+window.addEventListener("offline", verifierconnexion);
+verifierconnexion();
+
+
+// ERREUR DETECTES 
 
 
 

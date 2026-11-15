@@ -48,6 +48,20 @@
         </section>
 
 
+        <section class="flex justify-evenly mx-10 border rounded-2xl px-1 my-10 h-20">
+            <div class="grid grid-cols-1 mt-3">
+                <p class="font-semibold text-2xl">Dernière mise à jour</p>
+                <p class="font-bold text-xl flex justify-center" id="temps">Time</p>
+            </div>
+            <div class="grid grid-cols-1 mt-3">
+                <p id="statusAPP" class="font-semibold text-2xl"></p>
+                <p id="statuserreur" class="font-serif text-xl flex justify-center">Aucune erreur détectée</p>
+            </div>
+            <div class="flex gap-2">
+                <p class="font-semibold text-2xl my-5">Status: <span id="status" class="font-serif text-xl mt-9"></span></p>
+            </div>
+        </section>
+
 
         <section id="metaux" class="grid grid-cols-2 gap-4 mx-10">
             <metal-card metal = "xau"></metal-card>
@@ -59,21 +73,24 @@
 
             <section>
             <article class=" mx-7 border border-black rounded-2xl mt-10">
-                <div class="flex bg-blue-950 gap-40 border rounded-t-2xl h-20 justify-between absolute">
-                    <h1 class="text-white text-2xl font-serif py-5 px-5">Estimer la valeur d'un bijoux</h1>
+                <div class="absolute">
+                    <h1 class="text-black text-2xl font-bold py-5 px-5">Estimer la valeur d'un bijoux</h1>
                 </div>
-                <div class="w-300 flex gap-30 ">
-                <div class="grid grid-cols-1 gap-3">
-                    <h2 class="font-semibold pt-10 px-10">Poids (en gramme):</h2>
+    <div class="w-300 flex gap-30">
+            <div class="grid grid-cols-1 gap-3">
+                    <h2 class="font-semibold pt-10 px-10 mt-10">Poids (en gramme):</h2>
                     <div>
                     <input id="poids" class="border  rounded border-black md:w-100 w-50 h-10 mx-10 px-10" type="number" placeholder="Exemple:10">
-                    <select name="metaux" id="metauxCalcul" class="border rounded bg-white text-blue-950 w-10 h-10">
-                        <option value="Or">Or</option>
-                        <option value="Argent">Argent</option>
-                    </select>
                     </div>
-                    <button id="Calculer" class="border rounded-xl h-10 w-50 mx-35 bg-yellow-500 font-semibold text-xl py-1">Calculer</button>
-                </div>
+                <button id="Calculer" class="border rounded-xl h-10 w-50 mx-35 bg-yellow-500 font-semibold text-xl py-1">Calculer</button>
+            </div>
+            <div class="w-50 grid grid-cols-1 align-items">
+                <p class="font-semibold pt-10 mt-10">Type de metal:</p>
+            <select name="metaux" id="metauxCalcul" class="border rounded bg-white text-blue-950 h-10">
+                <option value="Or">Or</option>
+                <option value="Argent">Argent</option>
+            </select>
+            </div>
 
                 <div class="border rounded-xl px-1 py-10 my-5 mx-10 bg-amber-100 grid justify-center h-50 w-105">
                     <h2 class="font-bold text-xl">Valeur Estimée:</h2>
@@ -83,25 +100,12 @@
                     </div>
                     <p class="text-xl" id="messageestimation">Entrée un poids pour estimer la valeur</p>
                 </div>
-                </div>
-                
+    </div>
+            
             </article>
         </section>
+        
 
-        <section class="flex justify-evenly mx-10 border rounded-2xl px-1 mt-10 h-20">
-            <div class="grid grid-cols-1 mt-3">
-                <p class="font-semibold text-2xl">Dernière mise à jour</p>
-                <p class="font-bold text-xl flex justify-center" id="temps">Time</p>
-            </div>
-            <div class="grid grid-cols-1 mt-3">
-                <p class="font-semibold text-2xl">Application disponible</p>
-                <p class="font-serif text-xl flex justify-center">Aucune erreur détectée</p>
-            </div>
-            <div class="flex gap-2">
-                <p class="font-semibold text-2xl mt-8">Statut:</p>
-                <p id="Statut" class="font-serif text-xl mt-9">En ligne</p>
-            </div>
-        </section>
     </main>
     <footer>
         <div class="flex flex-col items-center mt-10">
