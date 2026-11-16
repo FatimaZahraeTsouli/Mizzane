@@ -104,6 +104,43 @@
             
             </article>
         </section>
+
+
+
+
+<section class="mx-7 px-10 py-10 mt-10 rounded-2xl border border-gray-200 bg-white p-6 h-100">
+
+    <div>
+        <p class="text-2xl font-bold text-gray-900">
+            Historique de prix
+        </p>
+        <p class="text-sm text-gray-500">
+            Consultez l'évolution du prix des métaux
+        </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-4">
+
+        <select name="metalhistorique" id="historiqueMetal"
+            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700">
+            <option value="Or">Or</option>
+            <option value="Argent">Argent</option>
+        </select>
+
+        <select name="periode" id="periode"
+            class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700">
+            <option value="semaine">7-Jours</option>
+            <option value="mois">30-Jours</option>
+        </select>
+
+    </div>
+
+    <div id="graphiqueHistorique" class="mt-8 w-full flex items-end gap-2 h-64">
+        <!-- Graphique historique -->
+    </div>
+
+</section>
+
         
 
     </main>

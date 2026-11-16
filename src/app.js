@@ -14,6 +14,9 @@ const messageestimation = document.getElementById("messageestimation");
 const status = document.getElementById("status");
 const statusAPP = document.getElementById("statusAPP");
 const statuserreur = document.getElementById("statuserreur");
+const historiqueMetal = document.getElementById("historiqueMetal");
+const periode = document.getElementById("periode");
+const graphiqueHistorique = document.getElementById("graphiqueHistorique");
 
 
 // choix de devises 
@@ -25,9 +28,8 @@ choixDevise.addEventListener("change", function() {
 
 // APPORTER DATA OR DE L'API
 
-
 async function chargerhistoriqueOr(){
-    const response = await fetch(`https://xaus.com/api/v1/intraday?symbol=xau&hours=24`);
+    const response = await fetch(`https://xaus.com/api/v1/chart?symbol=xau&range=1mo&interval=1d`);
     if (!response.ok) {
         throw new Error("Erreur HTTP : " + response.status);
     }
@@ -35,19 +37,21 @@ async function chargerhistoriqueOr(){
     if (!historique.points || historique.points.length < 2) {
     throw new Error("Données historiques insuffisantes");
     }
-    const prixPrecedentOr = historique.points[0].p;
-    const prixActuelleOr = historique.points[historique.points.length - 1].p;
+    const prixPrecedentOr = historique.points[0].c;
+    const prixActuelleOr = historique.points[historique.points.length - 1].c;
     const variationOr = ( prixActuelleOr - prixPrecedentOr ) / 31.1035;
     const percentageOr = ((prixActuelleOr - prixPrecedentOr) / prixPrecedentOr) * 100;
     return {
-        variationOr, percentageOr
+        variationOr,
+        percentageOr,
+        points: historique.points
     }
 }
 
 // APPORTER DATA ARGENT DE L'API
 
 async function chargerhistoriqueArgent(){
-    const responseArgent = await fetch(`https://xaus.com/api/v1/chart?symbol=silver&range=1d&interval=5m`);
+    const responseArgent = await fetch(`https://xaus.com/api/v1/chart?symbol=silver&range=1mo&interval=1d`);
     if (!responseArgent.ok) {
         throw new Error("Erreur HTTP : " + responseArgent.status);
     }
@@ -60,7 +64,9 @@ async function chargerhistoriqueArgent(){
     const variationArgent = ( prixActuelleArgent - prixPrecedentArgent ) / 31.1035;
     const percentageArgent = ((prixActuelleArgent - prixPrecedentArgent) / prixPrecedentArgent) * 100;
     return {
-        variationArgent, percentageArgent
+        variationArgent,
+        percentageArgent,
+        points: historiqueArgent.points
     }
 }
 
@@ -268,7 +274,74 @@ verifierconnexion();
 
 // ERREUR DETECTES 
 
+async function chartgraphique(points){
+    graphiqueHistorique.innerHTML = "";
+    graphiqueHistorique.classList.add("overflow-x-auto");
+    graphiqueHistorique.style.width = "100%";
+graphiqueHistorique.style.maxWidth = "100%";
+    if (!points || points.length === 0){
+        graphiqueHistorique.textContent = "Données indisponible!!";
+        return;
+    }
+    const prices = points.map(point => point.c);
+    const prixMaximum = Math.max(...prices);
+    const prixMinimum = Math.min(...prices);
+    const hauteurs = prices.map(p => prixMaximum === prixMinimum ? 50 : ((p - prixMinimum) / (prixMaximum - prixMinimum)) * 100);
+    const container = document.createElement("div");
+        container.className = "flex items-end gap-2 h-64 w-max";
+        container.style.minWidth = "100%";
+        container.style.columnGap = "20px";
+        container.style.width = "max-content";
+        graphiqueHistorique.appendChild(container);
+        points.forEach((point, index) =>{
+        const barre = document.createElement("div");
+        barre.style.height = `${Math.max(hauteurs[index] * 2, 5)}px`;
+        barre.style.width = "24px";
+        barre.style.backgroundColor = "red";
+        barre.style.border = "2px solid black"; 
+        const date = new Date(point.t * 1000);
+        const jour = document.createElement("span");
+        jour.className = "text-[10px] leading-4 mt-1";
+        jour.textContent = date.toLocaleDateString("fr-FR", {day: "2-digit",month: "2-digit"});
+        const colonne = document.createElement("div");
+        colonne.style.minHeight = "0";
+        colonne.className = "flex flex-col items-center justify-end h-full shrink-0";
+        colonne.style.width = "40px";
+        colonne.appendChild(barre);
+        colonne.appendChild(jour);
+        container.appendChild(colonne);
+        console.log("Container:", container.getBoundingClientRect());
+        console.log("Barre:", barre.getBoundingClientRect());
+    })
+}
 
+
+async function afficherchart(){
+    const metal = historiqueMetal.value;
+    const nombreJours = periode.value === "semaine" ? 7 : 30;
+    const dateFin = new Date();
+    const dateDebut = new Date(dateFin);
+    dateDebut.setDate(dateDebut.getDate() - nombreJours);
+    let resultat;
+    if (metal === "Or"){
+        resultat = await chargerhistoriqueOr();
+    }
+    else if (metal === "Argent"){
+        resultat = await chargerhistoriqueArgent();
+    }
+    if (!resultat || !resultat.points) {
+    chartgraphique([]);
+    return;
+    }
+    const pointsFiltres = resultat.points.filter(point => {
+    const datePoint = new Date(point.t * 1000);
+    return datePoint >= dateDebut && datePoint <= dateFin;
+    });
+    chartgraphique(pointsFiltres);
+}
+historiqueMetal.addEventListener("change", afficherchart);
+periode.addEventListener("change", afficherchart);
+afficherchart();
 
 
 
